@@ -1,0 +1,142 @@
+SQL OF DATABASE: 
+ 
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO"; 
+START TRANSACTION; 
+SET time_zone = "+00:00"; 
+ 
+DROP DATABASE IF EXISTS `bookstore_db`; 
+CREATE DATABASE `bookstore_db` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci; 
+USE `bookstore_db`; 
+ 
+CREATE TABLE `user_name_tbl` ( 
+  `name_id` int(11) NOT NULL AUTO_INCREMENT, 
+  `fname_fld` varchar(100) NOT NULL, 
+  `lname_fld` varchar(100) NOT NULL, 
+  `name_created_fld` timestamp NOT NULL DEFAULT current_timestamp(), 
+  `name_updated_fld` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE 
+current_timestamp(), 
+  PRIMARY KEY (`name_id`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; 
+ 
+CREATE TABLE `user_account_tbl` ( 
+  `account_id` int(11) NOT NULL AUTO_INCREMENT, 
+  `name_id` int(11) NOT NULL, 
+  `email` varchar(150) NOT NULL, 
+  `password_hash` varchar(255) NOT NULL, 
+  `phone_encrypted` text DEFAULT NULL, 
+  `phone_iv` varbinary(12) DEFAULT NULL, 
+  `phone_tag` varbinary(16) DEFAULT NULL, 
+  `role` enum('admin','user') DEFAULT 'user', 
+  `account_created_fld` timestamp NOT NULL DEFAULT current_timestamp(), 
+  `account_updated_fld` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE 
+current_timestamp(), 
+  PRIMARY KEY (`account_id`), 
+  UNIQUE KEY `uq_buyer_email` (`email`), 
+  KEY `idx_buyer_name_id` (`name_id`), 
+  CONSTRAINT `fk_account_name` 
+    FOREIGN KEY (`name_id`) REFERENCES `user_name_tbl` (`name_id`) 
+    ON DELETE CASCADE ON UPDATE CASCADE 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; 
+ 
+CREATE TABLE `user_address_tbl` ( 
+  `address_id` int(11) NOT NULL AUTO_INCREMENT, 
+  `account_id` int(11) NOT NULL, 
+  `country_fld` varchar(100) NOT NULL, 
+  `state_province_fld` varchar(100) NOT NULL, 
+  `city_town_fld` varchar(100) NOT NULL, 
+  `barangay_fld` varchar(100) DEFAULT NULL, 
+  `apartment_unit_fld` varchar(100) DEFAULT NULL, 
+  `streetnum_fld` varchar(100) NOT NULL, 
+  `housenum_fld` varchar(100) NOT NULL, 
+  `address_created_fld` timestamp NOT NULL DEFAULT current_timestamp(), 
+  `address_updated_fld` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE 
+current_timestamp(), 
+  PRIMARY KEY (`address_id`), 
+  KEY `idx_address_account_id` (`account_id`), 
+  CONSTRAINT `fk_address_account` 
+    FOREIGN KEY (`account_id`) REFERENCES `user_account_tbl` (`account_id`) 
+    ON DELETE CASCADE ON UPDATE CASCADE 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; 
+ 
+CREATE TABLE `books_tbl` ( 
+  `book_id` int(11) NOT NULL AUTO_INCREMENT, 
+  `title_fld` varchar(255) NOT NULL, 
+  `author_fld` varchar(255) NOT NULL, 
+  `description_fld` text DEFAULT NULL, 
+  `isbn_fld` varchar(50) DEFAULT NULL, 
+  `price_fld` decimal(10,2) NOT NULL, 
+  `stock_qty_fld` int(11) NOT NULL DEFAULT 0, 
+  `book_created_fld` timestamp NOT NULL DEFAULT current_timestamp(), 
+  `book_updated_fld` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE 
+current_timestamp(), 
+  PRIMARY KEY (`book_id`), 
+  UNIQUE KEY `uq_books_isbn` (`isbn_fld`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; 
+ 
+CREATE TABLE `categories_tbl` ( 
+  `category_id` int(11) NOT NULL AUTO_INCREMENT, 
+  `category_name_fld` varchar(100) NOT NULL, 
+  PRIMARY KEY (`category_id`), 
+  UNIQUE KEY `uq_category_name` (`category_name_fld`) 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; 
+ 
+CREATE TABLE `book_categories_tbl` ( 
+  `book_id` int(11) NOT NULL, 
+  `category_id` int(11) NOT NULL, 
+  PRIMARY KEY (`book_id`, `category_id`), 
+  KEY `idx_bc_category_id` (`category_id`), 
+  CONSTRAINT `fk_bc_book` 
+    FOREIGN KEY (`book_id`) REFERENCES `books_tbl` (`book_id`) 
+    ON DELETE CASCADE ON UPDATE CASCADE, 
+  CONSTRAINT `fk_bc_category` 
+    FOREIGN KEY (`category_id`) REFERENCES `categories_tbl` (`category_id`) 
+    ON DELETE CASCADE ON UPDATE CASCADE 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; 
+ 
+CREATE TABLE `orders_tbl` ( 
+  `order_id` int(11) NOT NULL AUTO_INCREMENT, 
+  `account_id` int(11) NOT NULL, 
+  `total_amount_fld` decimal(10,2) NOT NULL, 
+  `order_status_fld` enum('pending','paid','shipped','cancelled') DEFAULT 'pending', 
+  `order_created_fld` timestamp NOT NULL DEFAULT current_timestamp(), 
+  PRIMARY KEY (`order_id`), 
+  KEY `idx_orders_account_id` (`account_id`), 
+  CONSTRAINT `fk_orders_account` 
+    FOREIGN KEY (`account_id`) REFERENCES `user_account_tbl` (`account_id`) 
+    ON DELETE CASCADE ON UPDATE CASCADE 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; 
+ 
+CREATE TABLE `order_items_tbl` ( 
+  `order_item_id` int(11) NOT NULL AUTO_INCREMENT, 
+  `order_id` int(11) NOT NULL, 
+  `book_id` int(11) NOT NULL, 
+  `quantity_fld` int(11) NOT NULL, 
+  `price_at_purchase_fld` decimal(10,2) NOT NULL, 
+  PRIMARY KEY (`order_item_id`), 
+  KEY `idx_items_order_id` (`order_id`), 
+  KEY `idx_items_book_id` (`book_id`), 
+  CONSTRAINT `fk_items_order` 
+    FOREIGN KEY (`order_id`) REFERENCES `orders_tbl` (`order_id`) 
+    ON DELETE CASCADE ON UPDATE CASCADE, 
+  CONSTRAINT `fk_items_book` 
+    FOREIGN KEY (`book_id`) REFERENCES `books_tbl` (`book_id`) 
+    ON DELETE RESTRICT ON UPDATE CASCADE 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; 
+CREATE TABLE `reviews_tbl` ( 
+`review_id` int(11) NOT NULL AUTO_INCREMENT, 
+`account_id` int(11) NOT NULL, 
+`book_id` int(11) NOT NULL, 
+`rating_fld` tinyint(4) NOT NULL, 
+`comment_fld` text DEFAULT NULL, 
+`review_created_fld` timestamp NOT NULL DEFAULT current_timestamp(), 
+PRIMARY KEY (`review_id`), 
+KEY `idx_reviews_account_id` (`account_id`), 
+KEY `idx_reviews_book_id` (`book_id`), 
+CONSTRAINT `fk_reviews_account` 
+FOREIGN KEY (`account_id`) REFERENCES `user_account_tbl` (`account_id`) 
+ON DELETE CASCADE ON UPDATE CASCADE, 
+CONSTRAINT `fk_reviews_book` 
+FOREIGN KEY (`book_id`) REFERENCES `books_tbl` (`book_id`) 
+ON DELETE CASCADE ON UPDATE CASCADE 
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci; 
+COMMIT;

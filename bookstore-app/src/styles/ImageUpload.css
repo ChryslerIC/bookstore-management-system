@@ -1,0 +1,464 @@
+/* Image Upload Component Styles - Facebook-Style Crop Interface */
+
+.image-upload-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.upload-section {
+  background: #fff;
+  border-radius: 6px;
+}
+
+/* ========== DRAG AND DROP AREA ========== */
+.drag-drop-area {
+  border: 3px dashed #20365f;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background-color: rgba(212, 165, 116, 0.05);
+}
+
+.drag-drop-area:hover {
+  border-color: #20365f;
+  background-color: rgba(32, 54, 95, 0.05);
+}
+
+.drag-drop-area.dragging {
+  border-color: #20365f;
+  background-color: rgba(32, 54, 95, 0.1);
+  transform: scale(1.02);
+}
+
+.drag-drop-area p {
+  margin: 0.5rem 0;
+  color: #162a4b;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.drag-drop-area .or-text {
+  font-size: 0.9rem;
+  color: #20365f;
+  font-weight: normal;
+  margin-top: 1rem;
+}
+
+/* ========== FACEBOOK-STYLE CROP INTERFACE ========== */
+.facebook-crop-container {
+  width: 100%;
+  background: #fff;
+  border-radius: 0.5rem;
+  padding: 0;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.crop-wrapper {
+  overflow: visible;
+}
+
+.crop-frame-container {
+  position: relative;
+  width: 100%;
+  height: 450px;
+  background: #1a1a1a;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Darkened overlay effect (like Facebook) */
+.crop-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Image container - centered in crop area */
+.image-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  overflow: visible;
+  /* Prevent clipping during pan/zoom */
+}
+
+.image-container img {
+  max-width: none;
+  max-height: none;
+  transition: transform 0.1s ease;
+  user-select: none;
+  cursor: grab;
+  display: block;
+}
+
+.image-container img:active {
+  cursor: grabbing;
+}
+
+/* Visible crop frame border with corners (Facebook style) */
+.crop-frame-border {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid #fff;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.3),
+    0 0 0 9999px rgba(0, 0, 0, 0.5);
+  z-index: 3;
+  pointer-events: none;
+  background: transparent;
+}
+
+/* Corner markers for crop frame */
+.crop-corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #2196f3;
+  background: transparent;
+}
+
+.crop-corner.top-left {
+  top: -10px;
+  left: -10px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.crop-corner.top-right {
+  top: -10px;
+  right: -10px;
+  border-left: none;
+  border-bottom: none;
+}
+
+.crop-corner.bottom-left {
+  bottom: -10px;
+  left: -10px;
+  border-right: none;
+  border-top: none;
+}
+
+.crop-corner.bottom-right {
+  bottom: -10px;
+  right: -10px;
+  border-left: none;
+  border-top: none;
+}
+
+/* ========== CROP CONTROLS ========== */
+.crop-controls {
+  padding: 1.5rem;
+  background: #f9f9f9;
+  border-top: 1px solid #cbd5e1;
+}
+
+.control-group {
+  margin-bottom: 1.2rem;
+}
+
+.control-group:last-child {
+  margin-bottom: 0;
+}
+
+.control-group label {
+  display: block;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 0.75rem;
+  font-size: 0.95rem;
+}
+
+/* ========== REPOSITIONING CONTROLS ========== */
+.repositioning-controls {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 0.375rem;
+  border: 1px solid #cbd5e1;
+}
+
+.repositioning-controls label {
+  display: block;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.arrow-buttons-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.arrow-buttons-row {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.arrow-btn {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #20365f;
+  background: #fff;
+  color: #20365f;
+  border-radius: 4px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  outline: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.arrow-btn:hover {
+  background: #20365f;
+  color: #fff;
+  transform: scale(1.1);
+}
+
+.arrow-btn:active {
+  transform: scale(0.95);
+}
+
+.reset-btn {
+  padding: 0.5rem 1rem;
+  border: 2px solid #20365f;
+  background: #fff;
+  color: #20365f;
+  border-radius: 4px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+  white-space: nowrap;
+  outline: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.reset-btn:hover {
+  background: #20365f;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.reset-btn:active {
+  transform: translateY(0);
+}
+
+.zoom-slider {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: #d0d0d0;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+  touch-action: none;
+}
+
+.zoom-slider::-webkit-slider-thumb {
+  touch-action: none;
+}
+
+body.slider-active {
+  overflow: hidden;
+}
+
+.zoom-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #20365f;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.zoom-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #20365f;
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.zoom-slider::-moz-range-track {
+  background: transparent;
+  border: none;
+}
+
+.zoom-value {
+  display: inline-block;
+  font-weight: 600;
+  color: #20365f;
+  font-size: 0.9rem;
+  margin-left: 0.5rem;
+}
+
+.crop-dimensions {
+  background: #ffffff;
+  padding: 1rem;
+  border-radius: 0.375rem;
+  text-align: center;
+  margin-bottom: 1rem;
+  border: 1px solid #cbd5e1;
+}
+
+.dimension-label {
+  margin: 0.25rem 0;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.dimension-label strong {
+  color: #20365f;
+  font-weight: 600;
+}
+
+.instruction-text {
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
+  padding: 0.75rem;
+  background: #efefef;
+  border-radius: 0.375rem;
+  text-align: center;
+  border-left: 3px solid #20365f;
+}
+
+/* ========== ACTION BUTTONS ========== */
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  padding: 1.5rem;
+  border-top: 1px solid #cbd5e1;
+  background: #fff;
+}
+
+.btn {
+  padding: 0.75rem 2rem;
+  border: none;
+  border-radius: 0.375rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: #20365f;
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: #6d5e52;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(32, 54, 95, 0.3);
+}
+
+.btn-secondary {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.btn-secondary:hover {
+  background: #d0d0d0;
+  transform: translateY(-2px);
+}
+
+/* ========== CROPPED IMAGE PREVIEW SECTION ========== */
+.cropped-preview-section {
+  background: #fff;
+  border-radius: 0.5rem;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.cropped-preview-section h3 {
+  margin: 0 0 1.5rem 0;
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.cropped-image-display {
+  background: #f9f9f9;
+  border: 2px solid #cbd5e1;
+  border-radius: 0.375rem;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.cropped-image {
+  max-width: 100%;
+  max-height: 400px;
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.cropped-preview-section .btn-secondary {
+  width: 100%;
+  padding: 1rem;
+  font-size: 1rem;
+}
+
+.cropped-action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.cropped-action-buttons .btn {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+}
+
+.cropped-action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.cropped-action-buttons .btn {
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.95rem;
+}

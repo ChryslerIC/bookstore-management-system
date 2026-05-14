@@ -1,0 +1,254 @@
+.user-topbar {
+  background: #fff;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e5e5e5;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.user-topbar__content {
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.user-topbar__logo {
+  height: 70px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.user-topbar__logo-image {
+  height: 140px;
+  object-fit: contain;
+}
+
+.user-topbar__center {
+  flex: 2;
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+}
+
+.user-topbar__search {
+  position: relative;
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  align-items: center;
+  background: #f1f3f4;
+  border-radius: 40px;
+  padding: 4px 4px 4px 20px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.user-topbar__search:focus-within {
+  background: #fff;
+  border-color: #e0e0e0;
+  box-shadow: 0 1px 6px rgba(32, 33, 36, 0.1);
+}
+
+.user-topbar__search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 0.6rem 0;
+  font-size: 1rem;
+  color: #3c4043;
+  font-family: inherit;
+  outline: none;
+  min-width: 0;
+}
+
+.user-topbar__search-input::placeholder {
+  color: #70757a;
+}
+
+.user-topbar__search-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.user-topbar__search-clear {
+  background: none;
+  border: none;
+  color: #70757a;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s ease;
+}
+
+.user-topbar__search-clear:hover {
+  background: rgba(0, 0, 0, 0.05);
+  color: #202124;
+}
+
+.user-topbar__search-submit {
+  background: #20365f;
+  color: #fff;
+  border: none;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.user-topbar__search-submit:hover {
+  background: #162a4b;
+  transform: scale(1.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.user-topbar__right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  flex: 1;
+}
+
+.user-topbar__nav-icons {
+  display: inline-flex;
+  align-items: stretch;
+  background: transparent;
+  border: none;
+  overflow: visible;
+}
+
+.user-topbar__icon-button {
+  position: relative;
+  width: 56px;
+  height: 52px;
+  border: none;
+  border-right: 1px solid #ddd6cf;
+  background: transparent;
+  color: #111;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.user-topbar__icon-button:last-child {
+  border-right: none;
+}
+
+.user-topbar__icon-button:hover,
+.user-topbar__icon-button.active {
+  color: #20365f;
+  transform: translateY(-1px);
+}
+
+.user-topbar__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-topbar__badge {
+  position: absolute;
+  top: 8px;
+  right: 9px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #d73030;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.user-topbar__logout {
+  height: 44px;
+  padding: 0 1.6rem;
+  background: #20365f;
+  color: #fff;
+  border: none;
+  border-radius: 40px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.user-topbar__logout:hover {
+  background: #162a4b;
+}
+
+.user-topbar__logout:active {
+  transform: scale(0.98);
+}
+
+@media (max-width: 980px) {
+  .user-topbar__content {
+    flex-wrap: wrap;
+    padding: 0.75rem 1rem;
+  }
+
+  .user-topbar__center {
+    order: 3;
+    width: 100%;
+    flex: none;
+  }
+
+  .user-topbar__search {
+    max-width: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .user-topbar__right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .user-topbar__nav-icons {
+    flex: 1;
+  }
+
+  .user-topbar__icon-button {
+    flex: 1;
+    width: auto;
+  }
+
+  .user-topbar__logout {
+    padding: 0 1.1rem;
+  }
+}
