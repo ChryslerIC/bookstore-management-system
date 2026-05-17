@@ -1,319 +1,161 @@
-# Bookstore App - API Documentation
+# Bookstore Management System API Documentation
 
 ## Base URL
-```
-http://localhost:8000/backend/
-```
 
-## CORS Policy
-All endpoints support CORS. Requests from `http://localhost:5173` (React dev server) are allowed.
-
-### CORS Headers Sent with Every Response
-```
-Access-Control-Allow-Origin: *
-Access-Control-Allow-Methods: GET, POST, OPTIONS
-Access-Control-Allow-Headers: Content-Type
+```text
+http://127.0.0.1:8001/api
 ```
 
----
+## Response Format
 
-## Endpoints
+All endpoints return JSON.
 
-### 1. User Registration
-Register a new user with credentials.
+Example success:
 
-**Endpoint:**
-```
-POST /register.php
-```
-
-**Request Headers:**
-```
-Content-Type: application/json
-```
-
-**Request Body:**
-```json
-{
-  "fname": "Admin Lawrence",
-  "lname": "Dela Cruz",
-  "email": "Admin@gmail.com",
-  "phone": "09876543210",
-  "password": "adminako0612"
-}
-```
-
-**Success Response (201):**
 ```json
 {
   "success": true,
-  "message": "User registered successfully",
-  "user": {
-    "fname": "Admin Lawrence",
-    "lname": "Dela Cruz",
-    "email": "Admin@gmail.com",
-    "phone": "09876543210"
-  }
+  "message": "Operation completed"
 }
 ```
 
-**Error Responses:**
+Example error:
 
-Empty Fields (400):
 ```json
 {
   "success": false,
-  "message": "Missing required fields"
+  "message": "Validation failed"
 }
 ```
 
-User Already Exists (400):
-```json
-{
-  "success": false,
-  "message": "Email or username already exists"
-}
+## Authentication
+
+The API uses a custom bearer-token implementation.
+
+Protected endpoints require:
+
+```text
+Authorization: Bearer <token>
 ```
 
-Database Error (500):
-```json
-{
-  "success": false,
-  "message": "Error registering user: [error details]"
-}
-```
+## Required Endpoints
 
----
+### Authentication
 
-### 2. User Login
-Authenticate user with email and password.
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `POST /api/auth/logout`
 
-**Endpoint:**
-```
-POST /login.php
-```
+### Profile and Users
 
-**Request Headers:**
-```
-Content-Type: application/json
-```
+- `GET /api/users/profile`
+- `PUT /api/users/profile`
+- `PUT /api/users/change-password`
 
-**Request Body:**
-```jsonAdmin@gmail.com",
-  "password": "adminako0612
-  "email": "john@example.com",
-  "password": "SecurePass@123"
-}
-```
+### Books
 
-**Success Response (200):**
-```json
-{
-  "success": true,
-  "message": "Login successful",
-  "token": "a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6",
-  "user": {
-    "account_id": 1,
-    "fname": "Admin Lawrence",
-    "lname": "Dela Cruz",
-    "email": "Admin@gmail.com"
-  }
-}
-```
+- `POST /api/books`
+- `GET /api/books`
+- `GET /api/books/{book_id}`
+- `PUT /api/books/{book_id}`
+- `DELETE /api/books/{book_id}`
 
-**Error Responses:**
+### Orders
 
-User Not Found (401):
-```json
-{
-  "success": false,
-  "message": "User not registered"
-}
-```
+- `POST /api/orders`
+- `GET /api/orders/{order_id}`
+- `GET /api/orders/user/{user_id}`
 
-Invalid Credentials (401):
-```json
-{
-  "success": false,
-  "message": "Invalid email or password"
-}
-```
+### Admin and Reporting
 
-Missing Fields (400):
-```json
-{
-  "success": false,
-  "message": "Missing required fields"
-}
-```
-
----
+- `GET /api/admin/users`
+- `GET /api/admin/books`
+- `GET /api/reports/sales`
+- `GET /api/reports/orders`
 
 ## Status Codes
 
-| Code | Meaning |
-|------|---------|
-| 200 | OK - Request successful |
-| 201 | Created - Resource created successfully |
-| 400 | Bad Request - Invalid input or missing fields |
-| 401 | Unauthorized - Invalid credentials or user not found |
-| 405 | Method Not Allowed - Wrong HTTP method (must be POST) |
-| 500 | Server Error - Database or server issue |
+- `200 OK` successful read or update
+- `201 Created` successful resource creation
+- `400 Bad Request` validation failure or malformed input
+- `401 Unauthorized` missing or invalid authentication
+- `403 Forbidden` authenticated but not allowed
+- `404 Not Found` resource or route not found
+- `405 Method Not Allowed` unsupported HTTP method
+- `500 Internal Server Error` server or database failure
 
----
+## AES-256-GCM Security Documentation
 
-## Authentication Flow
+### Encrypted Fields
 
-### Registration Process
-1. User submits username, email, password
-2. Backend validates:
-   - All fields present
-   - Email and username unique
-3. Password hashed using `password_hash()` with BCRYPT
-4. User inserted into database
-5. Success message returned to frontend
+The project encrypts at least two sensitive fields:
 
-### Login Process
-1. User submits email and password
-2. Backend queries database for user by email
-3. If user not found → "User not registered" error
-4. If found, verify password using `password_verify()`
-5. If match → Generate token and return user data
-6. Frontend stores token in `localStorage.authToken`
+1. `user_account_tbl.phone_encrypted`
+   - related storage fields:
+   - `phone_iv`
+   - `phone_tag`
 
-### Protected Routes
-1. React checks `localStorage.authToken` before allowing access
-2. If token missing → Redirect to login
-3. If token present → Allow access to protected page
-4. On logout → Clear token from localStorage
+2. `orders_tbl.payment_encrypted`
+   - related storage fields:
+   - `payment_iv`
+   - `payment_tag`
 
----
+### Where Encryption Occurs
 
-## Security Notes
+Encryption happens before database insert or update:
 
-### Password Security
-- Passwords are hashed using **bcrypt** (`PASSWORD_BCRYPT`)
-- Never stored in plain text
-- Verified using `password_verify()` function
+- Registration:
+  - `POST /api/auth/register`
+- Profile update:
+  - `PUT /api/users/profile`
+- Order creation:
+  - `POST /api/orders`
 
-### Token System
-- Simple random token generated using `random_bytes(32)`
-- In production, use JWT (JSON Web Tokens)
-- Token stored in browser's `localStorage`
-- Should be sent in Authorization header for API requests
+Implementation:
+- `backend/encryption.php`
+- `api/index.php`
 
-### CORS
-- Allows requests from any origin in development
-- In production, restrict to specific domains
+### Where Decryption Occurs
 
-### SQL Injection Prevention
-- Uses `real_escape_string()` on user inputs
-- In production, use prepared statements (parameterized queries)
+Decryption happens before returning sensitive data in responses:
 
----
+- User profile retrieval:
+  - `GET /api/users/profile`
+- User login response:
+  - `POST /api/auth/login`
+- User formatting helper used by protected reads
 
-## Testing with cURL
+Implementation:
+- `api/bootstrap.php`
+- `backend/encryption.php`
 
-### Test Registration
-```bash
-curl -X POST http://localhost:8000/backend/register.php \
-  -H "Content-Type: application/json" \
-  -d '{
-    "username": "testuser",
-    "email": "test@example.com",
-    "password": "Test@12345"
-  }'
+### Key Management
+
+Encryption keys are not hardcoded in controllers or models.
+
+The backend loads the AES-256-GCM key from:
+- environment variable `ENCRYPTION_KEY_HEX`, or
+- local untracked configuration file `backend/config.local.php`
+
+Expected format:
+- 64 hexadecimal characters
+- converted to 32 bytes for AES-256
+
+### Algorithm Requirements Used
+
+- Algorithm: `AES-256-GCM`
+- PHP functions:
+  - `openssl_encrypt()`
+  - `openssl_decrypt()`
+- IV length: `12 bytes`
+- Tag length: `16 bytes`
+
+### Password Handling
+
+Passwords are not encrypted.
+
+They are hashed with:
+
+```php
+password_hash($password, PASSWORD_BCRYPT)
 ```
-
-### Test Login
-```bash
-curl -X POST http://localhost:8000/backend/login.php \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "test@example.com",
-    "password": "Test@12345"
-  }'
-```
-
-### Test CORS (Preflight Request)
-```bash
-curl -X OPTIONS http://localhost:8000/backend/register.php \
-  -H "Origin: http://localhost:5173" \
-  -H "Access-Control-Request-Method: POST"
-```
-
----
-
-## Database Schema
-
-### users Table
-```sql
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    email VARCHAR(100) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
-```
-
-### Field Descriptions
-| Field | Type | Description |
-|-------|------|-------------|
-| id | INT | Auto-incrementing primary key |
-| username | VARCHAR(50) | Unique username for account |
-| email | VARCHAR(100) | Unique email for account |
-| password | VARCHAR(255) | Bcrypt hashed password |
-| created_at | TIMESTAMP | Account creation time |
-| updated_at | TIMESTAMP | Last update time |
-
----
-
-## Example Frontend Integration (React)
-
-### Register
-```javascript
-const response = await fetch('http://localhost:8000/backend/register.php', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ username, email, password })
-});
-const data = await response.json();
-if (data.success) {
-  navigate('/login');
-}
-```
-
-### Login
-```javascript
-const response = await fetch('http://localhost:8000/backend/login.php', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email, password })
-});
-const data = await response.json();
-if (data.success) {
-  localStorage.setItem('authToken', data.token);
-  localStorage.setItem('user', JSON.stringify(data.user));
-  navigate('/home');
-}
-```
-
----
-
-## Rate Limiting Recommendations
-For production, implement rate limiting on:
-- `/register.php` - Limit to 5 requests per IP per hour
-- `/login.php` - Limit to 10 failed attempts per IP per 30 minutes
-
----
-
-## Future Enhancements
-- [ ] JWT token implementation
-- [ ] Account verification via email
-- [ ] Password reset functionality
-- [ ] User profile management
-- [ ] Session timeout
-- [ ] Two-factor authentication
-- [ ] Role-based access control (RBAC)

@@ -24,7 +24,7 @@ $output['test2_conn_exists'] = isset($conn) ? 'YES' : 'NO';
 // Test 3: Can we get tables list?
 $output['test3_tables'] = 'attempting...';
 try {
-    $result = $conn->query("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name");
+    $result = $conn->query("SHOW TABLES");
     $tables = $result->fetchAll(PDO::FETCH_COLUMN);
     $output['test3_tables'] = $tables;
 } catch (Exception $e) {

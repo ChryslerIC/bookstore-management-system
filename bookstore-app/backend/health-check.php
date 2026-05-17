@@ -49,12 +49,7 @@ try {
         $diagnostics['tables']['message'] = 'Failed to query categories_tbl';
     }
     
-    // Get all table names for the active driver
-    $driver = $conn->getAttribute(PDO::ATTR_DRIVER_NAME);
-    $tablesSql = $driver === 'sqlite'
-        ? "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%' ORDER BY name"
-        : "SHOW TABLES";
-    $stmt = $conn->query($tablesSql);
+    $stmt = $conn->query("SHOW TABLES");
     if ($stmt) {
         $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
         $diagnostics['tables']['list'] = $tables;

@@ -57,11 +57,11 @@ try {
     $debug['test5_fetch_book_3'] = 'checking...';
     try {
         $stmt = $conn->prepare("
-            SELECT bc.category_id, c.category_name
+            SELECT bc.category_id, c.category_name_fld AS category_name
             FROM book_categories_tbl bc
             INNER JOIN categories_tbl c ON bc.category_id = c.category_id
             WHERE bc.book_id = :book_id
-            ORDER BY c.category_name
+            ORDER BY c.category_name_fld
         ");
         $stmt->execute([':book_id' => 3]);
         $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -74,7 +74,7 @@ try {
     // Test 6: List all tables
     $debug['test6_tables'] = 'checking...';
     try {
-        $stmt = $conn->prepare("SELECT name FROM sqlite_master WHERE type='table'");
+        $stmt = $conn->prepare("SHOW TABLES");
         $stmt->execute();
         $tables = $stmt->fetchAll(PDO::FETCH_COLUMN);
         $debug['test6_tables'] = $tables;

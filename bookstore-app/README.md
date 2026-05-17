@@ -1,73 +1,78 @@
-# React + TypeScript + Vite
+# Bookstore Management System
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Backend development project for an online bookstore management system using:
+- Vanilla PHP 8+
+- MySQL or MariaDB
+- JSON REST-style API
+- Custom token-based authentication
+- AES-256-GCM encryption for sensitive fields
 
-Currently, two official plugins are available:
+This repository also includes a demo frontend, but the assessed backend deliverable is the PHP API in:
+- `api/`
+- `backend/`
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Backend Scope
 
-## React Compiler
+Implemented required endpoint groups:
+- Authentication
+- Profile and user management
+- Books
+- Orders
+- Admin and reporting
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Main API entry points:
+- `api/index.php`
+- `api/bootstrap.php`
+- `router.php`
 
-## Expanding the ESLint configuration
+## Security Summary
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Required security features included:
+- Password hashing with `password_hash()`
+- AES-256-GCM encryption using `openssl_encrypt()` and `openssl_decrypt()`
+- Random 12-byte IV per encryption
+- Authentication tags stored and verified on decrypt
+- Validation and JSON error responses
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Encrypted sensitive fields:
+- User phone number
+- Order payment method
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## MySQL Requirement
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+This project now requires MySQL or MariaDB only.
+
+Setup files:
+- `backend/database.sql`
+- `backend/config.local.example.php`
+- `SETUP_GUIDE.md`
+- `API_DOCS.md`
+
+## Quick Start
+
+1. Import `backend/database.sql` into MySQL/MariaDB.
+2. Copy `backend/config.local.example.php` to `backend/config.local.php`.
+3. Fill in your database credentials and 64-character encryption key.
+4. Start PHP:
+
+```bash
+php -S 127.0.0.1:8001 router.php
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+5. API root:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```text
+http://127.0.0.1:8001/api
 ```
+
+## Encryption Key
+
+Generate a compliant key with:
+
+```bash
+openssl rand -hex 32
+```
+
+Store it in:
+- environment variable `ENCRYPTION_KEY_HEX`, or
+- `backend/config.local.php`
